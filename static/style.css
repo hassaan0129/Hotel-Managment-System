@@ -1,0 +1,139 @@
+/* ===== GLOBAL STYLES ===== */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
+  color: #333;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+/* ===== NAVBAR ===== */
+header {
+  background-color: #2b2d42;
+  color: white;
+  padding: 15px 0;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  margin: auto;
+}
+
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links li a {
+  color: white;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active {
+  color: #ffd166;
+}
+
+/* ===== HERO ===== */
+.hero {
+  background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1400&q=80') no-repeat center center/cover;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.hero-content {
+  background: rgba(0,0,0,0.5);
+  padding: 40px;
+  border-radius: 10px;
+}
+
+.hero h1 {
+  font-size: 2.5em;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 20px;
+  background-color: #ef233c;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #d90429;
+}
+
+/* ===== ABOUT & CONTACT ===== */
+.about, .contact {
+  width: 80%;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.about h2, .contact h2 {
+  color: #2b2d42;
+  margin-bottom: 10px;
+}
+
+.about p, .contact p {
+  font-size: 1.1em;
+  line-height: 1.6em;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background-color: #2b2d42;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  margin-top: 50px;
+}
+
+/* ===== FLOATING LOGIN BUTTON ===== */
+.login-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: #ef233c;
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s, transform 0.2s;
+  z-index: 100;
+}
+
+.login-btn:hover {
+  background-color: #d90429;
+  transform: scale(1.05);
+}

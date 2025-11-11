@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Room | HotelEase</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    /* Same sidebar + dashboard style reused */
+    .dashboard-container { display: flex; height: 100vh; }
+    .sidebar {
+      width: 230px; background: #2b2d42; color: #fff;
+      display: flex; flex-direction: column; padding: 20px;
+    }
+    .sidebar h2 { color: #ffd166; text-align: center; margin-bottom: 20px; }
+    .sidebar a { color: #fff; padding: 10px; margin-bottom: 10px; border-radius: 6px; }
+    .sidebar a:hover, .sidebar .active { background: #ef233c; }
+
+    .main-content { flex: 1; padding: 30px; background: #f5f5f5; }
+    .main-content h1 { color: #2b2d42; margin-bottom: 20px; }
+
+    .form-box {
+      background: #fff; padding: 25px; border-radius: 10px;
+      max-width: 500px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    input, select {
+      width: 100%; padding: 10px; margin-top: 10px;
+      border-radius: 6px; border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 20px; padding: 12px; width: 100%;
+      background: #ef233c; color: #fff; border: none;
+      border-radius: 6px; font-weight: bold; cursor: pointer;
+    }
+
+    button:hover { background: #d90429; }
+  </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+  
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>User Panel</h2>
+    <a href="/dashboard">Dashboard</a>
+    <a class="active" href="#">Book a Room</a>
+    <a href="/order_food">Order Food</a>
+    <a href="/view_bill">View Bill</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h1>Book a Room</h1>
+
+    <div class="form-box">
+      <label>Full Name</label>
+      <input type="text" placeholder="Enter your name">
+
+      <label>Check-in Date</label>
+      <input type="date">
+
+      <label>Check-out Date</label>
+      <input type="date">
+
+      <label>Room Type</label>
+      <select>
+        <option>Single Room</option>
+        <option>Double Room</option>
+        <option>Deluxe Room</option>
+        <option>Suite</option>
+      </select>
+
+      <button onclick="alert('Room booking submitted! Backend coming soon.')">
+        Book Now
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Dashboard | HotelEase</title>
+
+  <!-- ALL STYLES ARE INLINE — NO EXTERNAL CSS NEEDED -->
+  <style>
+    /* ===== DASHBOARD LAYOUT ===== */
+    .dashboard-container {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 230px;
+      background-color: #2b2d42;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      font-size: 1.3em;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #ffd166;
+    }
+
+    .sidebar a {
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      transition: background 0.3s;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #ef233c;
+    }
+
+    /* ===== MAIN AREA ===== */
+    .main-content {
+      flex: 1;
+      background: #f5f5f5;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .main-header h1 {
+      color: #2b2d42;
+      margin: 0;
+    }
+
+    .logout-btn {
+      background-color: #ef233c;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .logout-btn:hover {
+      background-color: #d90429;
+    }
+
+    /* ===== CARDS ===== */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 25px;
+      text-align: center;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card h3 {
+      color: #2b2d42;
+      margin: 0 0 10px 0;
+      font-size: 1.2em;
+    }
+
+    .card p {
+      color: #555;
+      font-size: 0.95em;
+      margin: 0;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 15px 0;
+      }
+      .sidebar a {
+        margin: 0 5px;
+        font-size: 0.9em;
+      }
+      .main-content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <h2>Staff Panel</h2>
+      <a href="/staff_dashboard" class="active">Dashboard</a>
+      <a href="/check_in">Check-In Guests</a>
+      <a href="/room_cleaning">Room Cleaning</a>
+      <a href="/service_requests">Service Requests</a>
+      <a href="/reports">Reports</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="main-header">
+        <h1>Welcome, Staff Member</h1>
+        <button class="logout-btn" onclick="window.location.href='/'">Logout</button>
+      </div>
+
+      <div class="cards">
+  <div class="card" onclick="window.location.href='/check_in'">
+    <h3>🧾 Check-In Guests</h3>
+    <p>Manage new guest arrivals and assign rooms.</p>
+  </div>
+
+  <div class="card" onclick="window.location.href='/room_cleaning'">
+    <h3>🧹 Room Cleaning</h3>
+    <p>View and update cleaning schedules.</p>
+  </div>
+
+  <div class="card" onclick="window.location.href='/service_requests'">
+    <h3>📞 Service Requests</h3>
+    <p>Track and complete guest service requests.</p>
+  </div>
+
+  <div class="card" onclick="window.location.href='/reports'">
+    <h3>📋 Reports</h3>
+    <p>View work summaries and activity logs.</p>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</body>
+</html>

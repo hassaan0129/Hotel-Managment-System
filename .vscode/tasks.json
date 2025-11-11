@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build crow server",
+      "type": "shell",
+      "command": "C:/msys64/mingw64/bin/g++.exe",
+      "args": [
+        "main.cpp",
+        "-o",
+        "server.exe",
+        "-std=c++17",
+        "-pthread",
+        "-lssl",
+        "-lcrypto",
+        "-lws2_32",
+        "-lwsock32"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - HotelEase</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    /* ===== LOGIN PAGE STYLES ===== */
+    .login-container {
+      width: 400px;
+      margin: 80px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .category-tabs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .category-tab {
+      flex: 1;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+      color: #555;
+    }
+
+    .category-tab.active {
+      border-bottom: 3px solid #ef233c;
+      color: #ef233c;
+    }
+
+    .login-form input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    .login-form button {
+      width: 100%;
+      background-color: #ef233c;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .login-form button:hover {
+      background-color: #d90429;
+    }
+
+    .role-display {
+      margin-top: 15px;
+      font-size: 0.9em;
+      color: #555;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar reuse -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">🏨 HotelEase</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html" class="active">Login</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- LOGIN BOX -->
+  <div class="login-container">
+    <h2>Login</h2>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <div class="category-tab active" data-role="user">User</div>
+      <div class="category-tab" data-role="staff">Staff</div>
+      <div class="category-tab" data-role="admin">Admin</div>
+    </div>
+
+    <!-- Login Form -->
+    <form class="login-form" id="loginForm">
+      <input type="text" id="loginId" placeholder="Login ID / Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+      <p class="role-display">Logging in as: <strong id="roleName">User</strong></p>
+    </form>
+  </div>
+
+  <script>
+    // ===== Handle category switching =====
+    const tabs = document.querySelectorAll('.category-tab');
+    const roleName = document.getElementById('roleName');
+    let selectedRole = 'user';
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        tabs.forEach(t => t.classList.remove('active'));
+        // Add to clicked one
+        tab.classList.add('active');
+        // Update selected role
+        selectedRole = tab.dataset.role;
+        roleName.textContent = tab.textContent;
+      });
+    });
+
+    // ===== Handle login form submission =====
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const loginId = document.getElementById('loginId').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      // Later: send to backend (Crow)
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: loginId,
+          password: password,
+          role: selectedRole
+        })
+      });
+
+      if (res.redirected) {
+  window.location.href = res.url;
+} else if (res.status === 302) {
+  window.location.href = '/dashboard';
+} else {
+  const text = await res.text();
+  alert(text);
+}
+
+    });
+  </script>
+
+</body>
+</html>

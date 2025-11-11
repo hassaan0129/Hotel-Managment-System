@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Dashboard | HotelEase</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    .dashboard-container {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 230px;
+      background-color: #2b2d42;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      font-size: 1.3em;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #ffd166;
+    }
+
+    .sidebar a {
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      transition: background 0.3s;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #ef233c;
+    }
+
+    .main-content {
+      flex: 1;
+      background: #f5f5f5;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .main-header h1 {
+      color: #2b2d42;
+    }
+
+    .logout-btn {
+      background-color: #ef233c;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .logout-btn:hover {
+      background-color: #d90429;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 25px;
+      text-align: center;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card h3 {
+      color: #2b2d42;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #555;
+      font-size: 0.95em;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- 🌐 SIDEBAR -->
+    <div class="sidebar">
+      <h2>User Panel</h2>
+      <a href="/dashboard" class="active">Dashboard</a>
+      <a href="/user_book_room">Book Room</a>
+      <a href="/user_order_food">Order Food</a>
+      <a href="/user_view_bill">View Bill</a>
+    </div>
+
+    <!-- 📊 MAIN CONTENT -->
+    <div class="main-content">
+      <div class="main-header">
+        <h1>Welcome, User</h1>
+        <button class="logout-btn" onclick="window.location.href='/'">Logout</button>
+      </div>
+
+      <div class="cards">
+        <div class="card" onclick="window.location.href='/user_book_room'">
+          <h3>🛏️ Book a Room</h3>
+          <p>Reserve your perfect stay instantly.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='/user_order_food'">
+          <h3>🍽️ Order Food</h3>
+          <p>Get delicious meals delivered to your room.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='/user_view_bill'">
+          <h3>💳 View Bill</h3>
+          <p>Check your room and food expenses anytime.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
