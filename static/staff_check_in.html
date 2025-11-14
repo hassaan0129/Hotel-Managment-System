@@ -1,41 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Check-In Guests | HotelEase</title>
-  <link rel="stylesheet" href="/static/style.css" />
-  <style>
-    .dashboard-container { display: flex; height: 100vh; overflow: hidden; }
-    .sidebar { width: 230px; background-color: #2b2d42; color: white; display: flex; flex-direction: column; padding: 20px; }
-    .sidebar h2 { font-size: 1.3em; margin-bottom: 25px; text-align: center; color: #ffd166; }
-    .sidebar a { color: white; padding: 10px 15px; border-radius: 6px; margin-bottom: 10px; transition: background 0.3s; font-weight: 500; }
-    .sidebar a:hover, .sidebar a.active { background-color: #ef233c; }
-    .main-content { flex: 1; background: #f5f5f5; padding: 30px; overflow-y: auto; }
-    .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .main-header h1 { color: #2b2d42; }
-    .logout-btn, .back-btn { background-color: #ef233c; color: white; padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s; }
-    .logout-btn:hover, .back-btn:hover { background-color: #d90429; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Check-In Guest</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; }
+        .container { max-width: 800px; margin: 30px auto; padding: 20px; }
+        .back-link { color: #16a085; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .section { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section-title { font-size: 24px; font-weight: bold; margin-bottom: 25px; color: #2c3e50; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 15px; }
+        .btn { padding: 12px 30px; background: #16a085; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: 600; }
+        .btn:hover { background: #138d75; }
+        .bookings-list { margin-top: 30px; }
+        .booking-item { padding: 15px; border: 1px solid #e0e0e0; border-radius: 6px; margin-bottom: 10px; }
+        .booking-item strong { color: #16a085; }
+    </style>
 </head>
 <body>
-  <div class="dashboard-container">
-    <div class="sidebar">
-      <h2>Staff Panel</h2>
-      <a href="/staff_dashboard">Dashboard</a>
-      <a href="/check_in" class="active">Check-In Guests</a>
-      <a href="/room_cleaning">Room Cleaning</a>
-      <a href="/service_requests">Service Requests</a>
-      <a href="/reports">Reports</a>
+    <div class="container">
+        <a href="/staff_dashboard" class="back-link">← Back to Dashboard</a>
+        
+        <div class="section">
+            <div class="section-title">Check-In Guest</div>
+            
+            <div class="form-group">
+                <label>Booking ID</label>
+                <input type="number" id="bookingId" placeholder="Enter booking ID">
+            </div>
+            
+            <button class="btn" onclick="performCheckIn()">Check-In Guest</button>
+        </div>
+
+        <div class="section bookings-list">
+            <div class="section-title">Pending Check-Ins</div>
+            <div id="pendingBookings">Loading...</div>
+        </div>
     </div>
-    <div class="main-content">
-      <div class="main-header">
-        <h1>Check-In Guests</h1>
-        <button class="logout-btn" onclick="window.location.href='/'">Logout</button>
-      </div>
-      <p>Here you can check in new guests and assign rooms.</p>
-      <button class="back-btn" onclick="window.location.href='/staff_dashboard'">Back to Dashboard</button>
-    </div>
-  </div>
+
+    <script>
+        async function performCheckIn() {
+            const bookingId = document.getElementById('bookingId').value;
+            
+            if (!bookingId) {
+                alert('Please enter booking ID');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/bookings/checkin/${bookingId}`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Check-in successful!');
+                    document.getElementById('bookingId').value = '';
+                    loadPendingBookings();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                alert('Error performing check-in');
+            }
+        }
+
+        async function loadPendingBookings() {
+            try {
+                const response = await fetch('/api/bookings/all');
+                const data = await response.json();
+                const bookings = data.bookings.filter(b => b.status === 'Confirmed');
+                
+                const container = document.getElementById('pendingBookings');
+                
+                if (bookings.length === 0) {
+                    container.innerHTML = '<p style="color: #999;">No pending check-ins</p>';
+                    return;
+                }
+                
+                container.innerHTML = bookings.map(b => `
+                    <div class="booking-item">
+                        <strong>Booking #${b.bookingId}</strong> - User: ${b.userId} - Room: ${b.roomNumber}
+                        <br>Check-In: ${b.checkInDate}
+                        <button onclick="document.getElementById('bookingId').value=${b.bookingId}; performCheckIn()" 
+                                style="margin-top: 8px; padding: 6px 12px; background: #16a085; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Check-In
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+            }
+        }
+
+        loadPendingBookings();
+    </script>
 </body>
 </html>

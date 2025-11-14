@@ -1,77 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View Bill | HotelEase</title>
-  <link rel="stylesheet" href="/static/style.css" />
-  <style>
-    .dashboard-container { display: flex; height: 100vh; }
-    .sidebar {
-      width: 230px; background: #2b2d42; color: white;
-      display: flex; flex-direction: column; padding: 20px;
-    }
-    .sidebar h2 { color: #ffd166; text-align: center; }
-    .sidebar a { color: white; padding: 10px; border-radius: 6px; margin-bottom: 10px; }
-    .sidebar a:hover, .active { background: #ef233c; }
-
-    .main-content { flex: 1; padding: 30px; background: #f5f5f5; }
-    .main-content h1 { color: #2b2d42; }
-
-    table {
-      width: 100%; background: white;
-      border-radius: 10px; overflow: hidden;
-      border-collapse: collapse;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      margin-top: 20px;
-    }
-    th, td {
-      padding: 15px; text-align: left;
-      border-bottom: 1px solid #ccc;
-    }
-    th { background: #2b2d42; color: white; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Bill - Hotel Management</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 30px auto; padding: 20px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+        .bill-container { background: white; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); overflow: hidden; }
+        .bill-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .bill-header h1 { font-size: 32px; margin-bottom: 10px; }
+        .bill-header p { font-size: 14px; opacity: 0.9; }
+        .bill-content { padding: 30px; }
+        .bill-section { margin-bottom: 25px; }
+        .bill-section-title { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; }
+        .bill-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .bill-row:last-child { border-bottom: none; }
+        .bill-label { font-size: 15px; color: #666; }
+        .bill-value { font-size: 15px; font-weight: 600; color: #333; }
+        .bill-total { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .bill-total .bill-row { border-bottom: none; padding: 8px 0; }
+        .grand-total { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-top: 15px; }
+        .grand-total .bill-row { border-bottom: none; font-size: 24px; font-weight: bold; }
+        .bill-footer { text-align: center; padding: 20px; color: #999; font-size: 13px; border-top: 1px solid #f0f0f0; margin-top: 20px; }
+        .btn { padding: 12px 30px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500; transition: 0.3s; margin: 10px 5px; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .loading { text-align: center; padding: 60px 20px; color: #666; }
+        .no-data { text-align: center; padding: 60px 20px; color: #999; }
+        .action-buttons { text-align: center; margin-top: 30px; }
+        .info-note { background: #e7f3ff; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; color: #1976d2; font-size: 14px; border-radius: 4px; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+        
+        <div class="bill-container">
+            <div class="bill-header">
+                <h1>📄 Your Bill</h1>
+                <p>Detailed breakdown of your expenses</p>
+            </div>
+            
+            <div class="bill-content" id="billContent">
+                <div class="loading">Loading your bill...</div>
+            </div>
+        </div>
+    </div>
 
-<div class="dashboard-container">
+    <script>
+        const userId = localStorage.getItem('userId') || 'user';
 
-  <div class="sidebar">
-    <h2>User Panel</h2>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/book_room">Book a Room</a>
-    <a href="/order_food">Order Food</a>
-    <a class="active" href="#">View Bill</a>
-  </div>
+        async function loadBill() {
+            try {
+                const response = await fetch(`/api/bill/${userId}`);
+                const bill = await response.json();
+                
+                const content = document.getElementById('billContent');
+                
+                // Check if there are any charges
+                if (bill.grandTotal === 0) {
+                    content.innerHTML = `
+                        <div class="no-data">
+                            <p style="font-size: 18px; margin-bottom: 10px;">📭</p>
+                            <p>No charges yet. Make a booking or order food to see your bill.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                content.innerHTML = `
+                    <div class="info-note">
+                        ℹ️ This bill shows all your current expenses. Final payment will be processed at check-out.
+                    </div>
 
-  <div class="main-content">
-    <h1>Your Bill</h1>
+                    <div class="bill-section">
+                        <div class="bill-section-title">Room Charges</div>
+                        <div class="bill-row">
+                            <span class="bill-label">Room Booking(s)</span>
+                            <span class="bill-value">₹${bill.roomCharges.toFixed(2)}</span>
+                        </div>
+                    </div>
 
-    <table>
-      <tr>
-        <th>Item</th>
-        <th>Cost</th>
-      </tr>
-      <tr>
-        <td>Room Charges</td>
-        <td>$250</td>
-      </tr>
-      <tr>
-        <td>Food Orders</td>
-        <td>$52</td>
-      </tr>
-      <tr>
-        <td>Service Charges</td>
-        <td>$10</td>
-      </tr>
-      <tr>
-        <th>Total</th>
-        <th>$312</th>
-      </tr>
-    </table>
-  </div>
+                    <div class="bill-section">
+                        <div class="bill-section-title">Food & Beverages</div>
+                        <div class="bill-row">
+                            <span class="bill-label">Food Orders</span>
+                            <span class="bill-value">₹${bill.foodCharges.toFixed(2)}</span>
+                        </div>
+                    </div>
 
-</div>
+                    <div class="bill-total">
+                        <div class="bill-row">
+                            <span class="bill-label">Subtotal</span>
+                            <span class="bill-value">₹${bill.subtotal.toFixed(2)}</span>
+                        </div>
+                        <div class="bill-row">
+                            <span class="bill-label">Tax (18% GST)</span>
+                            <span class="bill-value">₹${bill.tax.toFixed(2)}</span>
+                        </div>
+                    </div>
 
+                    <div class="grand-total">
+                        <div class="bill-row">
+                            <span>Grand Total</span>
+                            <span>₹${bill.grandTotal.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="printBill()">🖨️ Print Bill</button>
+                        <button class="btn btn-secondary" onclick="downloadBill()">📥 Download PDF</button>
+                    </div>
+
+                    <div class="bill-footer">
+                        Thank you for choosing our hotel!<br>
+                        For any queries, please contact the front desk.
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading bill:', error);
+                document.getElementById('billContent').innerHTML = 
+                    '<div class="no-data">Error loading bill. Please try again.</div>';
+            }
+        }
+
+        function printBill() {
+            window.print();
+        }
+
+        function downloadBill() {
+            alert('PDF download feature coming soon! For now, please use Print > Save as PDF');
+        }
+
+        loadBill();
+    </script>
 </body>
 </html>

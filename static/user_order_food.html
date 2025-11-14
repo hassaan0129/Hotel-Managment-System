@@ -1,86 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Order Food | HotelEase</title>
-  <link rel="stylesheet" href="/static/style.css" />
-  <style>
-    .dashboard-container { display: flex; height: 100vh; }
-    .sidebar {
-      width: 230px; background: #2b2d42; color: #fff;
-      display: flex; flex-direction: column; padding: 20px;
-    }
-    .sidebar h2 { color: #ffd166; text-align: center; margin-bottom: 20px; }
-    .sidebar a { color: #fff; padding: 10px; margin-bottom: 10px; border-radius: 6px; }
-    .sidebar a:hover, .sidebar .active { background: #ef233c; }
-
-    .main-content { flex: 1; padding: 30px; background: #f5f5f5; }
-    .main-content h1 { color: #2b2d42; margin-bottom: 20px; }
-
-    .food-grid {
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-      gap: 20px;
-    }
-
-    .food-card {
-      background: #fff; padding: 20px; border-radius: 10px;
-      text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .food-card button {
-      margin-top: 10px; padding: 10px 15px;
-      background: #ef233c; color: #fff; border: none;
-      border-radius: 6px; cursor: pointer;
-    }
-
-    .food-card button:hover { background: #d90429; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Food - Hotel Management</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 20px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+        .page-header { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 25px; text-align: center; }
+        .page-header h1 { font-size: 32px; color: #333; margin-bottom: 10px; }
+        .page-header p { color: #666; font-size: 16px; }
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+        .menu-section { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section-title { font-size: 24px; font-weight: 600; color: #333; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .menu-category { margin-bottom: 30px; }
+        .category-title { font-size: 18px; font-weight: 600; color: #667eea; margin-bottom: 15px; }
+        .menu-items { display: grid; gap: 15px; }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; transition: 0.3s; }
+        .menu-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-color: #667eea; }
+        .item-info { flex: 1; }
+        .item-name { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 5px; }
+        .item-price { font-size: 18px; color: #28a745; font-weight: 600; }
+        .item-controls { display: flex; align-items: center; gap: 10px; }
+        .qty-input { width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; text-align: center; font-size: 14px; }
+        .btn-add { padding: 8px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: 0.3s; }
+        .btn-add:hover { background: #5568d3; }
+        .cart-section { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 20px; }
+        .cart-empty { text-align: center; padding: 40px 20px; color: #999; }
+        .cart-items { margin-bottom: 20px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; margin-bottom: 10px; }
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-size: 14px; font-weight: 600; color: #333; }
+        .cart-item-qty { font-size: 13px; color: #666; }
+        .cart-item-price { font-size: 15px; font-weight: 600; color: #28a745; margin-right: 10px; }
+        .btn-remove { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-remove:hover { background: #c82333; }
+        .cart-total { border-top: 2px solid #e0e0e0; padding-top: 15px; margin-top: 15px; }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 16px; }
+        .grand-total { font-size: 20px; font-weight: bold; color: #667eea; padding-top: 10px; border-top: 2px solid #667eea; }
+        .room-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin: 15px 0; font-size: 15px; }
+        .btn-order { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-order:hover { background: #218838; }
+        .btn-order:disabled { background: #6c757d; cursor: not-allowed; }
+        @media (max-width: 768px) { .content-grid { grid-template-columns: 1fr; } .cart-section { position: static; } }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+        
+        <div class="page-header">
+            <h1>🍽️ Order Food to Your Room</h1>
+            <p>Delicious meals delivered fresh to your door</p>
+        </div>
 
-<div class="dashboard-container">
+        <div class="content-grid">
+            <div class="menu-section">
+                <div class="section-title">Our Menu</div>
+                
+                <div class="menu-category">
+                    <div class="category-title">🍛 Main Course</div>
+                    <div class="menu-items" id="mainCourse"></div>
+                </div>
 
-  <div class="sidebar">
-    <h2>User Panel</h2>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/book_room">Book a Room</a>
-    <a class="active" href="#">Order Food</a>
-    <a href="/view_bill">View Bill</a>
-  </div>
+                <div class="menu-category">
+                    <div class="category-title">🍜 Appetizers</div>
+                    <div class="menu-items" id="appetizers"></div>
+                </div>
 
-  <div class="main-content">
-    <h1>Order Food</h1>
+                <div class="menu-category">
+                    <div class="category-title">🍰 Desserts</div>
+                    <div class="menu-items" id="desserts"></div>
+                </div>
 
-    <div class="food-grid">
-      <div class="food-card">
-        <h3>🍕 Pizza</h3>
-        <p>Cheesy and delicious.</p>
-        <button onclick="alert('Pizza added to order!')">Add</button>
-      </div>
+                <div class="menu-category">
+                    <div class="category-title">🥤 Beverages</div>
+                    <div class="menu-items" id="beverages"></div>
+                </div>
+            </div>
 
-      <div class="food-card">
-        <h3>🍔 Burger</h3>
-        <p>Hot and juicy.</p>
-        <button onclick="alert('Burger added to order!')">Add</button>
-      </div>
-
-      <div class="food-card">
-        <h3>🥤 Soft Drink</h3>
-        <p>Refreshing beverage.</p>
-        <button onclick="alert('Drink added to order!')">Add</button>
-      </div>
-
-      <div class="food-card">
-        <h3>🍰 Cake</h3>
-        <p>Sweet and soft.</p>
-        <button onclick="alert('Cake added to order!')">Add</button>
-      </div>
+            <div class="cart-section">
+                <div class="section-title">Your Order</div>
+                <div id="cartContent">
+                    <div class="cart-empty">🛒 Your cart is empty</div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-</div>
+    <script>
+        const userId = localStorage.getItem('userId') || 'user';
+        let cart = [];
 
+        const menuData = {
+            mainCourse: [
+                { name: 'Chicken Biryani', price: 350 },
+                { name: 'Mutton Karahi', price: 450 },
+                { name: 'Paneer Butter Masala', price: 300 },
+                { name: 'Dal Makhani', price: 200 },
+                { name: 'Butter Chicken', price: 380 }
+            ],
+            appetizers: [
+                { name: 'Chicken Tikka', price: 280 },
+                { name: 'Paneer Tikka', price: 250 },
+                { name: 'Spring Rolls', price: 150 },
+                { name: 'Samosa (4 pcs)', price: 100 }
+            ],
+            desserts: [
+                { name: 'Gulab Jamun', price: 120 },
+                { name: 'Ice Cream', price: 100 },
+                { name: 'Kheer', price: 110 },
+                { name: 'Brownie', price: 140 }
+            ],
+            beverages: [
+                { name: 'Fresh Juice', price: 120 },
+                { name: 'Cold Drink', price: 60 },
+                { name: 'Tea', price: 40 },
+                { name: 'Coffee', price: 60 },
+                { name: 'Mineral Water', price: 30 }
+            ]
+        };
+
+        function displayMenu() {
+            Object.keys(menuData).forEach(category => {
+                const container = document.getElementById(category);
+                menuData[category].forEach((item, index) => {
+                    container.innerHTML += `
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-price">₹${item.price}</div>
+                            </div>
+                            <div class="item-controls">
+                                <input type="number" class="qty-input" id="qty-${category}-${index}" 
+                                       min="0" max="10" value="0">
+                                <button class="btn-add" onclick="addToCart('${item.name}', ${item.price}, '${category}', ${index})">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function addToCart(name, price, category, index) {
+            const qty = parseInt(document.getElementById(`qty-${category}-${index}`).value);
+            
+            if (qty > 0) {
+                const existingItem = cart.find(item => item.name === name);
+                
+                if (existingItem) {
+                    existingItem.quantity += qty;
+                } else {
+                    cart.push({ name, price, quantity: qty });
+                }
+                
+                document.getElementById(`qty-${category}-${index}`).value = 0;
+                updateCart();
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartContent = document.getElementById('cartContent');
+            
+            if (cart.length === 0) {
+                cartContent.innerHTML = '<div class="cart-empty">🛒 Your cart is empty</div>';
+                return;
+            }
+            
+            let total = 0;
+            let itemsHTML = '<div class="cart-items">';
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                itemsHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-qty">Qty: ${item.quantity}</div>
+                        </div>
+                        <span class="cart-item-price">₹${itemTotal}</span>
+                        <button class="btn-remove" onclick="removeFromCart(${index})">✕</button>
+                    </div>
+                `;
+            });
+            
+            itemsHTML += '</div>';
+            
+            const tax = total * 0.05;
+            const grandTotal = total + tax;
+            
+            cartContent.innerHTML = `
+                ${itemsHTML}
+                <div class="cart-total">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>₹${total.toFixed(2)}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax (5%):</span>
+                        <span>₹${tax.toFixed(2)}</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>Total:</span>
+                        <span>₹${grandTotal.toFixed(2)}</span>
+                    </div>
+                </div>
+                <input type="number" class="room-input" id="roomNumber" placeholder="Enter your room number" min="100" max="999">
+                <button class="btn-order" onclick="placeOrder(${grandTotal})">
+                    Place Order (₹${grandTotal.toFixed(2)})
+                </button>
+            `;
+        }
+
+        async function placeOrder(totalPrice) {
+            const roomNumber = parseInt(document.getElementById('roomNumber').value);
+            
+            if (!roomNumber || roomNumber < 100) {
+                alert('Please enter a valid room number');
+                return;
+            }
+            
+            const orderData = {
+                userId: userId,
+                roomNumber: roomNumber,
+                items: cart.map(item => ({ name: item.name, quantity: item.quantity })),
+                totalPrice: totalPrice
+            };
+            
+            try {
+                const response = await fetch('/api/orders/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ Order Placed Successfully!\n\nOrder ID: ${result.orderId}\nTotal: ₹${totalPrice.toFixed(2)}\n\nYour food will be delivered to room ${roomNumber} shortly!`);
+                    cart = [];
+                    updateCart();
+                } else {
+                    alert('❌ Order failed. Please try again.');
+                }
+            } catch (error) {
+                alert('Error placing order. Please try again.');
+            }
+        }
+
+        displayMenu();
+    </script>
 </body>
 </html>

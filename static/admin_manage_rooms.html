@@ -1,32 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manage Rooms | HotelEase</title>
-  <link rel="stylesheet" href="/assets/style.css" />
-  <style>
-    body { background: #f5f5f5; font-family: Arial, sans-serif; }
-    .container { max-width: 900px; margin: 60px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    h1 { color: #2b2d42; margin-bottom: 20px; }
-    button { background-color: #ef233c; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-    button:hover { background-color: #d90429; }
-    input, select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Rooms - Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container { max-width: 1400px; margin: 20px auto; padding: 20px; }
+        .header { background: #2c3e50; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .back-link { color: white; text-decoration: none; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 32px; font-weight: bold; color: #2c3e50; }
+        .stat-label { color: #7f8c8d; font-size: 14px; margin-top: 5px; }
+        .section { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .section-title { font-size: 20px; font-weight: bold; margin-bottom: 20px; color: #2c3e50; }
+        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 5px; font-weight: 500; color: #555; }
+        .form-group input, .form-group select { padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #ecf0f1; padding: 12px; text-align: left; font-weight: 600; }
+        td { padding: 12px; border-bottom: 1px solid #ecf0f1; }
+        .status { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .status-available { background: #d4edda; color: #155724; }
+        .status-occupied { background: #f8d7da; color: #721c24; }
+        .status-maintenance { background: #fff3cd; color: #856404; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🏨 Manage Rooms</h1>
-    <form>
-      <input type="text" placeholder="Room Number" required />
-      <select>
-        <option>Single Room</option>
-        <option>Double Room</option>
-        <option>Suite</option>
-      </select>
-      <input type="number" placeholder="Price per Night" required />
-      <button type="submit">Add Room</button>
-    </form>
-  </div>
+    <div class="container">
+        <div class="header">
+            <a href="/admin_dashboard" class="back-link">← Back to Admin Dashboard</a>
+            <h1>🏨 Room Management</h1>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalRooms">0</div>
+                <div class="stat-label">Total Rooms</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="availableRooms">0</div>
+                <div class="stat-label">Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="occupiedRooms">0</div>
+                <div class="stat-label">Occupied</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="maintenanceRooms">0</div>
+                <div class="stat-label">Maintenance</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Add New Room</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Room Number</label>
+                    <input type="number" id="roomNumber" placeholder="e.g., 101">
+                </div>
+                <div class="form-group">
+                    <label>Room Type</label>
+                    <select id="roomType">
+                        <option>Single</option>
+                        <option>Double</option>
+                        <option>Suite</option>
+                        <option>Deluxe</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price per Night (₹)</label>
+                    <input type="number" id="pricePerNight" placeholder="e.g., 1500">
+                </div>
+                <div class="form-group">
+                    <label>Floor</label>
+                    <input type="number" id="floor" placeholder="e.g., 1">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="status">
+                        <option>Available</option>
+                        <option>Maintenance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Features</label>
+                    <input type="text" id="features" placeholder="AC, TV, WiFi">
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="addRoom()" style="margin-top: 15px;">Add Room</button>
+        </div>
+
+        <div class="section">
+            <div class="section-title">All Rooms</div>
+            <table id="roomsTable">
+                <thead>
+                    <tr>
+                        <th>Room No</th>
+                        <th>Type</th>
+                        <th>Price</th>
+                        <th>Floor</th>
+                        <th>Status</th>
+                        <th>Features</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="roomsBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function loadRooms() {
+            try {
+                const response = await fetch('/api/admin/rooms');
+                const data = await response.json();
+                const rooms = data.rooms || [];
+                
+                let available = 0, occupied = 0, maintenance = 0;
+                
+                const tbody = document.getElementById('roomsBody');
+                tbody.innerHTML = '';
+                
+                rooms.forEach(room => {
+                    if (room.status === 'Available') available++;
+                    else if (room.status === 'Occupied') occupied++;
+                    else if (room.status === 'Maintenance') maintenance++;
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${room.roomNumber}</strong></td>
+                            <td>${room.type}</td>
+                            <td>₹${room.pricePerNight}</td>
+                            <td>${room.floor}</td>
+                            <td><span class="status status-${room.status.toLowerCase()}">${room.status}</span></td>
+                            <td>${room.features}</td>
+                            <td>
+                                <button class="btn btn-primary" onclick="editRoom(${room.roomNumber})">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteRoom(${room.roomNumber})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                document.getElementById('totalRooms').textContent = rooms.length;
+                document.getElementById('availableRooms').textContent = available;
+                document.getElementById('occupiedRooms').textContent = occupied;
+                document.getElementById('maintenanceRooms').textContent = maintenance;
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+            }
+        }
+
+        async function addRoom() {
+            const roomData = {
+                roomNumber: parseInt(document.getElementById('roomNumber').value),
+                type: document.getElementById('roomType').value,
+                pricePerNight: parseFloat(document.getElementById('pricePerNight').value),
+                status: document.getElementById('status').value,
+                floor: parseInt(document.getElementById('floor').value),
+                features: document.getElementById('features').value
+            };
+            
+            if (!roomData.roomNumber || !roomData.pricePerNight || !roomData.floor) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/rooms/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(roomData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Room added successfully!');
+                    document.getElementById('roomNumber').value = '';
+                    document.getElementById('pricePerNight').value = '';
+                    document.getElementById('floor').value = '';
+                    document.getElementById('features').value = '';
+                    loadRooms();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                alert('Error adding room');
+            }
+        }
+
+        async function deleteRoom(roomNumber) {
+            if (!confirm(`Delete room ${roomNumber}?`)) return;
+            
+            try {
+                const response = await fetch(`/api/admin/rooms/delete/${roomNumber}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Room deleted!');
+                    loadRooms();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                alert('Error deleting room');
+            }
+        }
+
+        function editRoom(roomNumber) {
+            alert('Edit functionality: Fill the form above with new values and implement update API');
+        }
+
+        loadRooms();
+    </script>
 </body>
 </html>
