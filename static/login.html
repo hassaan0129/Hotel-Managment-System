@@ -1,157 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - HotelEase</title>
-  <link rel="stylesheet" href="/assets/style.css" />
-  <style>
-    /* ===== LOGIN PAGE STYLES ===== */
-    .login-container {
-      width: 400px;
-      margin: 80px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    .category-tabs {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 25px;
-      border-bottom: 2px solid #ddd;
-    }
-
-    .category-tab {
-      flex: 1;
-      padding: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
-      color: #555;
-    }
-
-    .category-tab.active {
-      border-bottom: 3px solid #ef233c;
-      color: #ef233c;
-    }
-
-    .login-form input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-
-    .login-form button {
-      width: 100%;
-      background-color: #ef233c;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 5px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .login-form button:hover {
-      background-color: #d90429;
-    }
-
-    .role-display {
-      margin-top: 15px;
-      font-size: 0.9em;
-      color: #555;
-    }
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Hotel Management System</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+            margin: 20px;
+        }
+        .login-header {
+            background: linear-gradient(135deg, #2b2d42 0%, #3d3f5c 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .login-header h1 { font-size: 32px; margin-bottom: 10px; }
+        .login-form { padding: 40px 30px; }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #2b2d42; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        .login-footer {
+            text-align: center;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+        .login-footer p { color: #666; font-size: 14px; margin: 10px 0; }
+        .login-footer a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-footer a:hover { text-decoration: underline; }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            position: relative;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+        .btn-register-link {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+        .btn-register-link:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
 </head>
 <body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🏨 Welcome Back</h1>
+            <p>Login to your account</p>
+        </div>
 
-  <!-- Navbar reuse -->
-  <header>
-    <nav class="navbar">
-      <div class="logo">🏨 HotelEase</div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="login.html" class="active">Login</a></li>
-        <li><a href="register.html">Register</a></li>
-      </ul>
-    </nav>
-  </header>
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="userId" placeholder="Enter your username" required>
+            </div>
 
-  <!-- LOGIN BOX -->
-  <div class="login-container">
-    <h2>Login</h2>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
 
-    <!-- Category Tabs -->
-    <div class="category-tabs">
-      <div class="category-tab active" data-role="user">User</div>
-      <div class="category-tab" data-role="staff">Staff</div>
-      <div class="category-tab" data-role="admin">Admin</div>
+            <div class="form-group">
+                <label>Login As</label>
+                <select id="role" required>
+                    <option value="user">Guest</option>
+                    <option value="staff">Staff</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-login">Login</button>
+
+            <div class="divider">OR</div>
+
+            <a href="/register" class="btn-register-link">
+                Create New Account
+            </a>
+        </form>
+
+        <div class="login-footer">
+            <p><a href="/">← Back to Home</a></p>
+            <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                Demo: user/1234 | admin/admin123 | staff/staff123
+            </p>
+        </div>
     </div>
 
-    <!-- Login Form -->
-    <form class="login-form" id="loginForm">
-      <input type="text" id="loginId" placeholder="Login ID / Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-      <p class="role-display">Logging in as: <strong id="roleName">User</strong></p>
-    </form>
-  </div>
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
 
-  <script>
-    // ===== Handle category switching =====
-    const tabs = document.querySelectorAll('.category-tab');
-    const roleName = document.getElementById('roleName');
-    let selectedRole = 'user';
+            const loginData = {
+                id: document.getElementById('userId').value,
+                password: document.getElementById('password').value,
+                role: document.getElementById('role').value
+            };
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        // Remove active class from all tabs
-        tabs.forEach(t => t.classList.remove('active'));
-        // Add to clicked one
-        tab.classList.add('active');
-        // Update selected role
-        selectedRole = tab.dataset.role;
-        roleName.textContent = tab.textContent;
-      });
-    });
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
 
-    // ===== Handle login form submission =====
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const loginId = document.getElementById('loginId').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      // Later: send to backend (Crow)
-      const res = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: loginId,
-          password: password,
-          role: selectedRole
-        })
-      });
-
-      if (res.redirected) {
-  window.location.href = res.url;
-} else if (res.status === 302) {
-  window.location.href = '/dashboard';
-} else {
-  const text = await res.text();
-  alert(text);
-}
-
-    });
-  </script>
-
+                if (response.redirected) {
+                    // Save user session
+                    localStorage.setItem('userId', loginData.id);
+                    localStorage.setItem('userRole', loginData.role);
+                    window.location.href = response.url;
+                } else if (response.status === 401) {
+                    alert('❌ Invalid credentials! Please check your username, password, and role.');
+                } else {
+                    alert('❌ Login failed. Please try again.');
+                }
+            } catch (error) {
+                alert('❌ Network error. Please check your connection.');
+            }
+        }
+    </script>
 </body>
 </html>

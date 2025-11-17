@@ -401,10 +401,10 @@
                 <p><strong>Check-In:</strong> ${checkIn}</p>
                 <p><strong>Check-Out:</strong> ${checkOut}</p>
                 <p><strong>Nights:</strong> ${nights}</p>
-                <p><strong>Price per Night:</strong> ₹${pricePerNight}</p>
+                <p><strong>Price per Night:</strong> Rs.${pricePerNight}</p>
                 <hr>
                 <p style="font-size: 20px; color: #28a745;">
-                    <strong>Total Amount: ₹${selectedRoom.totalAmount}</strong>
+                    <strong>Total Amount: Rs.${selectedRoom.totalAmount}</strong>
                 </p>
             `;
             
@@ -442,18 +442,94 @@
                 
                 const result = await response.json();
                 
+                closeModal();
+                
                 if (result.success) {
-                    alert(`✅ Booking Confirmed!\n\nBooking ID: ${result.bookingId}\nTotal Amount: ₹${result.totalAmount}\n\n${result.message}`);
-                    closeModal();
-                    // Redirect to dashboard
-                    window.location.href = '/dashboard';
+                    showSuccessPopup(result);
                 } else {
-                    alert('❌ Booking Failed: ' + result.message);
+                    showErrorPopup(result.message);
                 }
             } catch (error) {
                 console.error('Error creating booking:', error);
-                alert('Error creating booking. Please try again.');
+                showErrorPopup('Network error. Please check your connection and try again.');
             }
+        }
+
+        // Beautiful Success Popup
+        function showSuccessPopup(result) {
+            const popup = document.createElement('div');
+            popup.className = 'success-popup';
+            popup.innerHTML = `
+                <div class="popup-overlay" onclick="closeSuccessPopup()"></div>
+                <div class="popup-content success-animation">
+                    <div class="success-checkmark">
+                        <div class="check-icon">
+                            <span class="icon-line line-tip"></span>
+                            <span class="icon-line line-long"></span>
+                            <div class="icon-circle"></div>
+                            <div class="icon-fix"></div>
+                        </div>
+                    </div>
+                    <h2>🎉 Booking Confirmed!</h2>
+                    <div class="booking-summary">
+                        <div class="summary-row">
+                            <span>Booking ID:</span>
+                            <strong>#${result.bookingId}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Room Number:</span>
+                            <strong>${selectedRoom.roomNumber}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Check-In:</span>
+                            <strong>${selectedRoom.checkIn}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Check-Out:</span>
+                            <strong>${selectedRoom.checkOut}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Total Nights:</span>
+                            <strong>${selectedRoom.nights}</strong>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>Total Amount:</span>
+                            <strong>Rs. ${result.totalAmount}</strong>
+                        </div>
+                    </div>
+                    <p class="success-message">${result.message}</p>
+                    <div class="popup-actions">
+                        <button class="btn btn-primary" onclick="window.location.href='/dashboard'">
+                            View My Bookings
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeSuccessPopup()">
+                            Book Another Room
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(popup);
+        }
+
+        // Error Popup
+        function showErrorPopup(message) {
+            const popup = document.createElement('div');
+            popup.className = 'success-popup';
+            popup.innerHTML = `
+                <div class="popup-overlay" onclick="closeSuccessPopup()"></div>
+                <div class="popup-content">
+                    <div class="error-icon">❌</div>
+                    <h2>Booking Failed</h2>
+                    <p class="error-message">${message}</p>
+                    <button class="btn btn-primary" onclick="closeSuccessPopup()">Try Again</button>
+                </div>
+            `;
+            document.body.appendChild(popup);
+        }
+
+        function closeSuccessPopup() {
+            const popup = document.querySelector('.success-popup');
+            if (popup) popup.remove();
         }
 
         // Close modal

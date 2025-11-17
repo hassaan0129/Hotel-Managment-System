@@ -81,12 +81,66 @@ public:
         return response;
     }
     
-    bool registerUser(const User& user) {
-        if (userTable.search(user.userId) != nullptr) {
-            return false;  // User already exists
+    // Register new user with validation
+    crow::json::wvalue registerUser(const std::string& userId, const std::string& password,
+                                      const std::string& name, const std::string& email,
+                                      const std::string& phone, const std::string& role) {
+        crow::json::wvalue response;
+        
+        // Validation checks
+        if (userId.empty() || password.empty() || name.empty()) {
+            response["success"] = false;
+            response["message"] = "Required fields are missing";
+            return response;
         }
-        userTable.insert(user.userId, user);
-        return true;
+        
+        if (userId.length() < 3) {
+            response["success"] = false;
+            response["message"] = "Username must be at least 3 characters";
+            return response;
+        }
+        
+        if (password.length() < 4) {
+            response["success"] = false;
+            response["message"] = "Password must be at least 4 characters";
+            return response;
+        }
+        
+        // Check if user already exists
+        if (userTable.search(userId) != nullptr) {
+            response["success"] = false;
+            response["message"] = "Username already exists. Please choose another.";
+            return response;
+        }
+        
+        // Create and insert user
+        User newUser(userId, password, name, email, phone, role);
+        userTable.insert(userId, newUser);
+        
+        response["success"] = true;
+        response["message"] = "Registration successful! You can now login.";
+        response["userId"] = userId;
+        
+        return response;
+    }
+    
+    // Get all users (for admin)
+    std::vector<crow::json::wvalue> getAllUsers() {
+        auto users = userTable.getAllValues();
+        std::vector<crow::json::wvalue> jsonUsers;
+        
+        for (const auto& user : users) {
+            jsonUsers.push_back(user.toJSON());
+        }
+        
+        return jsonUsers;
+    }
+    
+    // Delete user (admin only)
+    bool deleteUser(const std::string& userId) {
+        // Don't allow deleting admin account
+        if (userId == "admin") return false;
+        return userTable.remove(userId);
     }
     
     // ==================== ROOM MANAGEMENT ====================

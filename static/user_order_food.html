@@ -250,7 +250,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert(`✅ Order Placed Successfully!\n\nOrder ID: ${result.orderId}\nTotal: ₹${totalPrice.toFixed(2)}\n\nYour food will be delivered to room ${roomNumber} shortly!`);
+                    alert(`✅ Order Placed Successfully!\n\nOrder ID: ${result.orderId}\nTotal: Rs.${totalPrice.toFixed(2)}\n\nYour food will be delivered to room ${roomNumber} shortly!`);
                     cart = [];
                     updateCart();
                 } else {

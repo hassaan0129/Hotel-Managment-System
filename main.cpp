@@ -106,6 +106,80 @@ int main() {
         return crow::response(405, "Method not allowed");
     });
 
+    // ==================== REGISTER ====================
+    CROW_ROUTE(app, "/register").methods(crow::HTTPMethod::Get, crow::HTTPMethod::Post)
+    ([&hotelManager](const crow::request& req) {
+        if (req.method == crow::HTTPMethod::Get) {
+            auto html = readFile("static/register.html");
+            if (html.empty()) return crow::response(404, "register.html not found");
+            crow::response res(html);
+            res.add_header("Content-Type", "text/html");
+            return res;
+        }
+
+        if (req.method == crow::HTTPMethod::Post) {
+            try {
+                auto body = crow::json::load(req.body);
+                if (!body) return crow::response(400, "Invalid JSON");
+
+                std::string userId = body["userId"].s();
+                std::string password = body["password"].s();
+                std::string name = body["name"].s();
+                std::string email = body["email"].s();
+                std::string phone = body["phone"].s();
+                std::string role = "user";  // Default role for self-registration
+
+                auto result = hotelManager.registerUser(userId, password, name, email, phone, role);
+                return crow::response(result);
+            } catch (...) {
+                return crow::response(400, "Error processing registration");
+            }
+        }
+        return crow::response(405, "Method not allowed");
+    });
+
+    // ==================== USER MANAGEMENT API (Admin) ====================
+    
+    // Get all users
+    CROW_ROUTE(app, "/api/admin/users")
+    ([&hotelManager]() {
+        auto users = hotelManager.getAllUsers();
+        crow::json::wvalue response;
+        response["users"] = std::move(users);
+        return crow::response(response);
+    });
+
+    // Create user (admin creates staff/admin accounts)
+    CROW_ROUTE(app, "/api/admin/users/create").methods(crow::HTTPMethod::Post)
+    ([&hotelManager](const crow::request& req) {
+        try {
+            auto body = crow::json::load(req.body);
+            if (!body) return crow::response(400, "Invalid JSON");
+
+            std::string userId = body["userId"].s();
+            std::string password = body["password"].s();
+            std::string name = body["name"].s();
+            std::string email = body["email"].s();
+            std::string phone = body["phone"].s();
+            std::string role = body["role"].s();
+
+            auto result = hotelManager.registerUser(userId, password, name, email, phone, role);
+            return crow::response(result);
+        } catch (...) {
+            return crow::response(400, "Error creating user");
+        }
+    });
+
+    // Delete user
+    CROW_ROUTE(app, "/api/admin/users/delete/<string>").methods(crow::HTTPMethod::Delete)
+    ([&hotelManager](std::string userId) {
+        bool success = hotelManager.deleteUser(userId);
+        crow::json::wvalue response;
+        response["success"] = success;
+        response["message"] = success ? "User deleted successfully" : "Cannot delete user";
+        return crow::response(response);
+    });
+
     // ==================== USER DASHBOARD ====================
     CROW_ROUTE(app, "/dashboard")([]() {
         auto html = readFile("static/dashboard.html");

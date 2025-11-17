@@ -117,7 +117,7 @@
                             <div class="booking-detail"><strong>Check-In:</strong> ${booking.checkInDate}</div>
                             <div class="booking-detail"><strong>Check-Out:</strong> ${booking.checkOutDate}</div>
                             <div class="booking-detail"><strong>Nights:</strong> ${booking.nights}</div>
-                            <div class="booking-detail"><strong>Amount:</strong> ₹${booking.totalAmount}</div>
+                            <div class="booking-detail"><strong>Amount:</strong> Rs.${booking.totalAmount}</div>
                             <div class="booking-detail"><strong>Booked On:</strong> ${booking.bookingDate}</div>
                         </div>
                         ${booking.status === 'Confirmed' ? 
@@ -134,21 +134,62 @@
         }
 
         async function cancelBooking(bookingId) {
-            if (!confirm('Are you sure you want to cancel this booking?')) return;
+            if (!confirm('⚠️ Are you sure you want to cancel this booking?\n\nThis action cannot be undone.')) return;
             
             try {
-                const response = await fetch(`/api/bookings/cancel/${bookingId}`, { method: 'POST' });
+                const response = await fetch(`/api/bookings/cancel/${bookingId}`, { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('✅ Booking cancelled successfully!');
-                    loadBookings();
+                    // Show success modal instead of alert
+                    showSuccessModal('Booking Cancelled', 'Your booking has been successfully cancelled. The room is now available for others.');
+                    setTimeout(() => loadBookings(), 1500);
                 } else {
-                    alert('❌ ' + result.message);
+                    showErrorModal('Cancellation Failed', result.message || 'Unable to cancel booking. Please contact support.');
                 }
             } catch (error) {
-                alert('Error cancelling booking');
+                console.error('Cancel error:', error);
+                showErrorModal('Error', 'Network error. Please check your connection and try again.');
             }
+        }
+
+        // Success Modal
+        function showSuccessModal(title, message) {
+            const modal = document.createElement('div');
+            modal.className = 'custom-modal';
+            modal.innerHTML = `
+                <div class="modal-overlay"></div>
+                <div class="modal-box success-modal">
+                    <div class="modal-icon">✅</div>
+                    <h2>${title}</h2>
+                    <p>${message}</p>
+                    <button onclick="this.closest('.custom-modal').remove()" class="btn btn-primary">OK</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => modal.remove(), 3000);
+        }
+
+        // Error Modal
+        function showErrorModal(title, message) {
+            const modal = document.createElement('div');
+            modal.className = 'custom-modal';
+            modal.innerHTML = `
+                <div class="modal-overlay"></div>
+                <div class="modal-box error-modal">
+                    <div class="modal-icon">❌</div>
+                    <h2>${title}</h2>
+                    <p>${message}</p>
+                    <button onclick="this.closest('.custom-modal').remove()" class="btn btn-danger">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         function logout() {
